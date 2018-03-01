@@ -1,21 +1,21 @@
 class Snake {
 
-  constructor() {
-    
-    this.poss = createVector(0, 0);
-    this.xspeed = 1;
+  constructor(scl) {
+
+    this.scl = scl;
+    this.poss = createVector(scl, scl);
+    this.xspeed = 0;
     this.yspeed = 0;
     this.score = 0;
     this.tail = [];
 
   }
 
-  eat(pos) {
+  eat(food) {
 
-    var d = dist(this.poss.x, this.poss.y, pos.x, pos.y);
+    var d = dist(this.poss.x, this.poss.y, food.x, food.y);
     if (d < 1) {
       this.score++;
-      console.log('Score: ', this.score);
       return true;
     } else {
       return false;
@@ -30,35 +30,43 @@ class Snake {
 
   }
 
-  death() {
+  death(mine) {
 
+    var isDead = false;
     for (var i = 0; i < this.tail.length; i++) {
       var pos = this.tail[i];
       var d = dist(this.poss.x, this.poss.y, pos.x, pos.y);
-      if (d < 1) {
-        console.log('You died with a score of: ', this.score, ' Starting Over!')
+      var dMine = dist(this.poss.x, this.poss.y, mine.x, mine.y);
+      if (d === 0) {
+        isDead = true;
+        this.score = 0;
+        this.tail = [];
+      }
+      if (dMine === 0) {
+        isDead = true;
         this.score = 0;
         this.tail = [];
       }
     }
+    return isDead;
 
   }
 
   update() {
 
     if (this.score === this.tail.length) {
-      for (var i = 0; i < this.tail.length-1; i++) {
+      for (var i = 0; i < this.tail.length; i++) {
         this.tail[i] = this.tail[i+1];
       }
     }
 
     this.tail[this.score-1] = createVector(this.poss.x, this.poss.y);
 
-    this.poss.x = this.poss.x + this.xspeed*scl;
-    this.poss.y = this.poss.y + this.yspeed*scl;
+    this.poss.x += this.xspeed*this.scl;
+    this.poss.y += this.yspeed*this.scl;
 
-    this.poss.x = constrain(this.poss.x, 0, width-scl);
-    this.poss.y = constrain(this.poss.y, 0, height-scl);
+    this.poss.x = constrain(this.poss.x, 0, width-this.scl);
+    this.poss.y = constrain(this.poss.y, 0, height-this.scl);
 
   }
 
@@ -66,10 +74,10 @@ class Snake {
 
     fill(0, 255, 0);
     for (var i = 0; i < this.tail.length; i++) {
-      rect(this.tail[i].x, this.tail[i].y, scl, scl);
+      rect(this.tail[i].x, this.tail[i].y, this.scl, this.scl);
     }
+    rect(this.poss.x, this.poss.y, this.scl, this.scl);
 
-    rect(this.poss.x, this.poss.y, scl, scl);
   }
 
 }
