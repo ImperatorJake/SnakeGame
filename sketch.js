@@ -5,12 +5,13 @@ var mine;
 var totalScore = 0;
 var scl = 25;
 var dir;
-const url = '';
+const url = 'http://192.168.1.114:4000';
 var highScores;
 var score;
 var deathMSG;
 
 function setup() {
+  axios.defaults.withCredentials = true;
   score = createDiv('Score: '+totalScore);
   score.style('font-size', '24pt');
   deathMSG = createDiv('');
@@ -19,7 +20,6 @@ function setup() {
   createCanvas(800, 800);
   highScores = createDiv('Highscores: ');
   highScores.style('font-size', '24pt');
-  axios.defaults.withCredentials = true;
   handleGetRequest();
   snake = new Snake(scl);
   frameRate(12);
@@ -27,7 +27,7 @@ function setup() {
 }
 
 function draw() {
-  // handleGetRequest();
+  handleGetRequest();
   background(110);
   if (snake.eat(food)) {
     totalScore = snake.score;
@@ -63,9 +63,9 @@ function handleGetRequest() {
   axios.get(url+'/getSession')
        .then((res) => {
          if (res.data.highscores) {
-           var scoreString = 'Highscores: #1 => '
+           var scoreString = 'Highscores: '
            res.data.highscores.forEach((score) => {
-             scoreString += (score+' <~~> ');
+             scoreString += (' '+score+',');
            });
            highScores.html(scoreString, true);
          }
@@ -81,9 +81,9 @@ function handlePostRequest() {
   axios.post(url+'/postToSession', { highscore: totalScore })
        .then((res) => {
          if (res.data.highscores) {
-           var scoreString = 'Highscores: #1 => '
+           var scoreString = 'Highscores: '
            res.data.highscores.forEach((score) => {
-             scoreString += (score+' <~~> ');
+             scoreString += (' '+score+',');
            });
            highScores.html(scoreString, true);
          }
