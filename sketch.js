@@ -60,7 +60,7 @@ function generateObstacles() {
 }
 
 function handleGetRequest() {
-  axios.get(url+'/getSession')
+  axios.get(url+'getSession')
        .then((res) => {
          if (res.data.highscores) {
            var scoreString = 'Highscores: '
@@ -78,7 +78,7 @@ function handleGetRequest() {
 }
 
 function handlePostRequest() {
-  axios.post(url+'/postToSession', { highscore: totalScore })
+  axios.post(url+'postToSession', { highscore: totalScore })
        .then((res) => {
          if (res.data.highscores) {
            var scoreString = 'Highscores: '
