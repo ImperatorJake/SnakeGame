@@ -2,26 +2,26 @@
 var snake;
 var food;
 var mine;
-var totalScore = 0;
-var scl = 25;
 var dir;
-const url = 'http://192.168.1.114:4000';
+const scl = 25;
+const url = '';
+var totalScore = 0;
 var highScores;
 var score;
 var deathMSG;
 
 function setup() {
   axios.defaults.withCredentials = true;
-  score = createDiv('Score: '+totalScore);
-  score.style('font-size', '24pt');
-  deathMSG = createDiv('');
-  deathMSG.style('font-size', '24pt');
-  deathMSG.style('color','red');
+    score = createDiv('Score: '+totalScore);
+    score.style('font-size', '24pt');
+    deathMSG = createDiv('');
+    deathMSG.style('font-size', '24pt');
+    deathMSG.style('color','red');
   createCanvas(800, 800);
-  highScores = createDiv('Highscores: ');
-  highScores.style('font-size', '24pt');
+    highScores = createDiv('Highscores: ');
+    highScores.style('font-size', '24pt');
   handleGetRequest();
-  snake = new Snake(scl);
+  snake = new Snake(scl, width, height);
   frameRate(12);
   generateObstacles();
 }
@@ -30,13 +30,13 @@ function draw() {
   handleGetRequest();
   background(110);
   if (snake.eat(food)) {
-    totalScore = snake.score;
+    totalScore = snake.getScore();
     score.html('Score: '+totalScore);
     deathMSG.html('', true);
     generateObstacles();
   }
   if (snake.death(mine)) {
-    score.html('Score: '+snake.score);
+    score.html('Score: '+snake.getScore());
     deathMSG.html('You died with a score of: '+totalScore+' Starting Over!');
     handlePostRequest();
   }

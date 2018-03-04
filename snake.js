@@ -1,35 +1,42 @@
 class Snake {
-  constructor(scl) {
+  constructor(scl, width, height) {
     this.scl = scl;
+    this.width = width;
+    this.height = height;
     this.poss = createVector(scl, scl);
-    this.xspeed = 0;
-    this.yspeed = 0;
+    this.xDirectionChange = 0;
+    this.yDirectionChange = 0;
     this.score = 0;
     this.tail = [];
   }
 
-  eat(food) {
-    var d = dist(this.poss.x, this.poss.y, food.x, food.y);
-    if (d === 0) {
-      this.score++;
-      return true;
-    } else {
-      return false;
-    }
+  getScore() {
+    return this.score;
   }
 
   dir(x, y) {
-    this.xspeed = x;
-    this.yspeed = y;
+    this.xDirectionChange = x;
+    this.yDirectionChange = y;
+  }
+
+  eat(food) {
+    var didEatFood = false;
+    var dFood = dist(this.poss.x, this.poss.y, food.x, food.y);
+    if (dFood === 0) {
+        this.score++;
+        didEatFood = true;
+    }
+    return didEatFood;
   }
 
   death(mine) {
     var isDead = false;
+    var dMine = dist(this.poss.x, this.poss.y, mine.x, mine.y);
     for (var i = 0; i < this.tail.length; i++) {
       var pos = this.tail[i];
-      var d = dist(this.poss.x, this.poss.y, pos.x, pos.y);
-      var dMine = dist(this.poss.x, this.poss.y, mine.x, mine.y);
-      if (d === 0 || dMine === 0) {
+      var dSelf = dist(this.poss.x, this.poss.y, pos.x, pos.y);
+      var dMineTail = dist(pos.x, pos.y, mine.x, mine.y);
+      if (dSelf === 0 || dMine === 0 || dMineTail === 0) {
         isDead = true;
         this.score = 0;
         this.tail = [];
@@ -39,16 +46,21 @@ class Snake {
   }
 
   update() {
-    if (this.score === this.tail.length) {
-      for (var i = 0; i < this.tail.length; i++) {
-        this.tail[i] = this.tail[i+1];
+    if (!(this.score === this.tail.length)) {
+      this.tail[this.tail.length] = null;
+    }
+    for (var i = 0; i < this.tail.length; i++) {
+      if (!(this.tail.length <= (i+1))) {
+        this.tail[this.tail.length-i-1] = this.tail[this.tail.length-i-2];
       }
     }
-    this.tail[this.score-1] = createVector(this.poss.x, this.poss.y);
-    this.poss.x += this.xspeed*this.scl;
-    this.poss.y += this.yspeed*this.scl;
-    this.poss.x = constrain(this.poss.x, 0, width-this.scl);
-    this.poss.y = constrain(this.poss.y, 0, height-this.scl);
+    if (this.score !== 0) {
+      this.tail[0] = createVector(this.poss.x, this.poss.y);
+    }
+    this.poss.x += this.xDirectionChange*this.scl;
+    this.poss.y += this.yDirectionChange*this.scl;
+    this.poss.x = constrain(this.poss.x, 0, this.width-this.scl);
+    this.poss.y = constrain(this.poss.y, 0, this.height-this.scl);
   }
 
   show() {
