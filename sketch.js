@@ -4,7 +4,7 @@ var food;
 var mine;
 var dir;
 const scl = 25;
-const url = '';
+const url = window.location.href;
 var totalScore = 0;
 var highScores;
 var score;
